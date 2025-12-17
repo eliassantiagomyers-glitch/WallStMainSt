@@ -26,7 +26,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            /* Allow scrolling from top */
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+            /* Space for scroll */
         }
 
         header {
@@ -47,12 +51,31 @@
             font-style: italic;
         }
 
+        .container {
+            width: 90vw;
+            max-width: 1200px;
+            height: 75vh;
+            /* Occupy 75% of viewport height */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 800px;
+            /* Keeping original max-width for content */
+            margin: 0 auto;
+            padding: 2rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--bg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            align-items: center;
+        }
+
         /* Card Styles */
         .card-container {
             position: relative;
             width: 100%;
-            height: 500px;
-            /* Increased height */
+            flex: 1;
+            /* Fill remaining vertical space in container */
             cursor: pointer;
             transform-style: preserve-3d;
             transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
@@ -62,6 +85,10 @@
             transform: rotateY(180deg);
         }
 
+        .card-container.no-flip {
+            cursor: default;
+        }
+
         .card-face {
             position: absolute;
             width: 100%;
@@ -69,28 +96,14 @@
             backface-visibility: hidden;
             border: 2px solid var(--border);
             background: var(--bg);
-            padding: 2.5rem;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* Centers short content */
             align-items: center;
             text-align: center;
-            overflow-y: auto;
-            /* Allows scrolling for long text */
-        }
-
-        /* Customize scrollbar for minimalist look */
-        .card-face::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .card-face::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .card-face::-webkit-scrollbar-thumb {
-            background: var(--border);
+            overflow: hidden;
+            /* Prevent scrolling */
         }
 
         .card-front {
@@ -114,6 +127,20 @@
             margin-top: 2rem;
             font-size: 0.8rem;
             text-decoration: underline;
+        }
+
+        /* Wrapper for content to check size against */
+        .content-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-container.no-flip .tap-hint {
+            display: none;
         }
 
         .definition-section {
@@ -141,9 +168,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 2rem;
             width: 100%;
             gap: 1rem;
+            /* Removed margin-top as gap handles it */
         }
 
         .btn {
@@ -180,8 +207,10 @@
             }
 
             .container {
+                width: 95vw;
+                /* Fuller width on mobile */
+                height: 80vh;
                 padding: 0.5rem;
-                width: 100%;
             }
 
             h1 {
@@ -189,12 +218,7 @@
                 margin-bottom: 0.25rem;
             }
 
-            .card-container {
-                height: 60vh;
-                /* Responsive height for mobile */
-                max-height: 450px;
-                min-height: 300px;
-            }
+            /* Remove fixed heights in mobile query since we use flex in container now */
 
             .card-face {
                 padding: 1.25rem;
@@ -213,6 +237,56 @@
                 flex: 1;
             }
         }
+
+        /* Index List Styles */
+        .index-container {
+            width: 90vw;
+            max-width: 800px;
+            /* Match card container content width */
+            margin-top: 3rem;
+            text-align: left;
+        }
+
+        .index-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .index-list {
+            list-style: none;
+            /* Custom numbers or none */
+            padding: 0;
+            counter-reset: index-counter;
+        }
+
+        .index-item {
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: baseline;
+            line-height: 1.4;
+            padding: 0.5rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .index-item:hover {
+            border: 1px solid var(--border);
+            background: #f5f5f5;
+        }
+
+        .index-item::before {
+            counter-increment: index-counter;
+            content: counter(index-counter) ". ";
+            font-weight: 700;
+            min-width: 2.5rem;
+            /* Fixed width for alignment */
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 
@@ -230,13 +304,15 @@
                 <div class="tap-hint">Click to Reveal</div>
             </div>
             <div class="card-face card-back">
-                <div class="definition-section">
-                    <span class="def-label">Definition</span>
-                    <p class="def-text" id="card-def">Definition usage here.</p>
-                </div>
-                <div class="definition-section">
-                    <span class="def-label">Significance</span>
-                    <p class="def-text" id="card-sig">Significance context here.</p>
+                <div class="content-wrapper" id="card-back-wrapper">
+                    <div class="definition-section">
+                        <span class="def-label">Definition</span>
+                        <p class="def-text" id="card-def">Definition usage here.</p>
+                    </div>
+                    <div class="definition-section">
+                        <span class="def-label">Significance</span>
+                        <p class="def-text" id="card-sig">Significance context here.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -247,6 +323,13 @@
             <button class="btn" id="nextBtn" onclick="nextCard()">Next →</button>
         </div>
     </div>
+    <div class="index-container">
+        <h2 class="index-header">Card Index</h2>
+        <ul class="index-list" id="index-list">
+            <!-- List items generated by JS -->
+        </ul>
+    </div>
+
 
     <script>
         const studyData = [
@@ -509,6 +592,158 @@
                 term: "Financial Crisis (of 2008)",
                 definition: "Global economic collapse triggered by the bursting of the U.S. housing bubble and subprime mortgage crisis.",
                 significance: "The 'Great Recession.' It shattered faith in the self-regulating power of markets (neoliberalism), led to massive government bailouts, and fueled populist political movements (Occupy Wall Street, Tea Party)."
+            },
+            {
+                term: "What are the historical roots of the idea that Wall Street and Main Street as streets and symbols intersect at right angles?",
+                noFlip: true
+            },
+            {
+                term: "How did the idea of Main Street in fact emerge in connection with (in symbiotic relationship to) – rather than opposition to – Wall Street as illustrated through Greenfield Village and Disney?",
+                noFlip: true
+            },
+            {
+                term: "What is a stock? What is a bond? How are they similar? How are they different? How do they complicate the popular perception that Wall Street and Main Street are metaphors for streets that run at right angles to one another?",
+                noFlip: true
+            },
+            {
+                term: "What is producerism, and how does it help explain why Americans were loath to invest in securities prior to the 20th century?",
+                noFlip: true
+            },
+            {
+                term: "How/why does producerism get challenged in the late 19th century? (In your answer consider the impact of the eclipse of agriculture by industry as the leading engine of the overall economy.)",
+                noFlip: true
+            },
+            {
+                term: "According to Diana Henriques in Taming the Street, “By reforming Wall Street, Roosevelt enabled future generations of average Americans to participate in capitalism themselves and share directly in its rewards.” How so? How did the New Deal democratize capitalism, or, to put it another way, close the gap between Wall Street and Main Street?",
+                noFlip: true
+            },
+            {
+                term: "How/why did the New Deal view legislation to promote unionization and home ownership as measures designed to help ameliorate the Great Depression?",
+                noFlip: true
+            },
+            {
+                term: "In what ways does It’s a Wonderful Life reflect Wall St. / Main St. themes discussed in this course?",
+                noFlip: true
+            },
+            {
+                term: "How/why is retirement savings an area where Wall St. and Main St. intersect, as reflected in the case of Timken Steel?",
+                noFlip: true
+            },
+            {
+                term: "What is ERISA and why was it adopted?",
+                noFlip: true
+            },
+            {
+                term: "When and why did index funds emerge and what is the argument for them over mutual funds?",
+                noFlip: true
+            },
+            {
+                term: "How and why did World War II end the Great Depression more so than the New Deal?",
+                noFlip: true
+            },
+            {
+                term: "How did the G.I. Bill contribute to America’s “long economic boom” and “great compression”?",
+                noFlip: true
+            },
+            {
+                term: "How did consumerism differ from producerism and when/why did consumerism eclipse producerism?",
+                noFlip: true
+            },
+            {
+                term: "What were some of the indicators of America’s emergence as a mass consumption society? How did the “great compression” (and the policies that contributed to it) contribute to the rise of America as a mass consumption society?",
+                noFlip: true
+            },
+            {
+                term: "How did Wall Street influence the economy during the 1950s and 1960s, including with respect to expansion of big corporations, rise of consumer finance and debt, changes in stock ownership rates, and the rise of conglomerates?",
+                noFlip: true
+            },
+            {
+                term: "What were some of the signs indicating that America’s “long economic boom” was over?",
+                noFlip: true
+            },
+            {
+                term: "What are different explanations for deindustrialization, including those implicit or explicit in the film Blue Collar, the documentary The Business of America, and the book Capital Moves (based on the introduction)?",
+                noFlip: true
+            },
+            {
+                term: "What is the connection between deindustrialization and deunionization? How did deindustrialization and deunionization contribute to the rise of income inequality (i.e., the beginning of the New Gilded Age)?",
+                noFlip: true
+            },
+            {
+                term: "What explains the rise of the Great A&P Tea Co. vis-à-vis its competitors?",
+                noFlip: true
+            },
+            {
+                term: "How did the Great A&P Tea Co. transform itself over the years?  What led to its ultimate downfall?",
+                noFlip: true
+            },
+            {
+                term: "What explains the rise of anti-chain store legislation – and what became of that legislation and why? What is the difference between anti-chain legislation and the Robinson-Patman Act?",
+                noFlip: true
+            },
+            {
+                term: "How and why did Walmart (and similar type of service sector jobs) become the main job engine of the post-G.M., post-industrial economy? What are some of the essential features of the Walmart business model, according to Lichtenstein?",
+                noFlip: true
+            },
+            {
+                term: "What are the Wall Street / Main Street themes/tensions reflected in the Walmart - and later Amazon - business model?",
+                noFlip: true
+            },
+            {
+                term: "What was the impetus for deregulation in the 1970s and 1980s, starting with deregulation of the airline industry?  What was the effect of airline (and other) deregulation?",
+                noFlip: true
+            },
+            {
+                term: "What are Wall Street / Main Street themes/tensions reflected in deregulation?",
+                noFlip: true
+            },
+            {
+                term: "How is the movie Wall Street reflective of the 1970s/80s shift toward negative statism / neoliberalism?",
+                noFlip: true
+            },
+            {
+                term: "What are Wall Street / Main Street themes/tensions reflected in the movie Wall Street?",
+                noFlip: true
+            },
+            {
+                term: "What were the causes and consequences of Proposition 13?",
+                noFlip: true
+            },
+            {
+                term: "How did the tax revolt and deregulation reflect a shift from positive statism to negative statism?",
+                noFlip: true
+            },
+            {
+                term: "In what ways was/wan’t Prop 13 a tax revolt?",
+                noFlip: true
+            },
+            {
+                term: "How did Prop 13 contribute to the rise of a particular kind of plutocracy, as well as a gerontocracy?",
+                noFlip: true
+            },
+            {
+                term: "How did government shape the development of Silicon Valley – and how does this square with the myth of the rise of Silicon Valley? Put another way, how would you describe the relationship between Lockheed Missiles and Space Division and Apple? How did Robert Noyce and Fairchild Semiconductor serve as a bridge between them?",
+                noFlip: true
+            },
+            {
+                term: "Describe the evolution of the idea of ESG.",
+                noFlip: true
+            },
+            {
+                term: "What was the financial crisis, and what role did securitization of mortgages (mortgage-backed securities) play in the financial crisis?  How is the securitization of the mortgage market (as depicted in The Big Short) different from the mortgage origination market depicted in It’s A Wonderful Life?",
+                noFlip: true
+            },
+            {
+                term: "What were the high hopes for high tech in the 1970s, who harbored them, and why?",
+                noFlip: true
+            },
+            {
+                term: "To what extent were the high hopes for high tech realized? To what extent did high tech “solve” the job problem created by deindustrialization? How did high tech contribute to the rise of income inequality associated with the New Gilded Age beginning in the 1970s?",
+                noFlip: true
+            },
+            {
+                term: "What is the relationship between economic growth and wage growth before and after the 1970s? What is the significance of the post-1970s relationship between the two?",
+                noFlip: true
             }
         ];
 
@@ -517,9 +752,48 @@
         const termEl = document.getElementById('card-term');
         const defEl = document.getElementById('card-def');
         const sigEl = document.getElementById('card-sig');
+        const backWrapper = document.getElementById('card-back-wrapper');
         const progressEl = document.getElementById('progress');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
+
+        function fitText(element, maxFontSize = 32, minFontSize = 12) {
+            let currentSize = maxFontSize;
+            element.style.fontSize = currentSize + 'px';
+
+            // Reset height to auto to check natural height
+            element.style.height = 'auto';
+
+            const parent = element.parentElement;
+            // Ensure parent has a fixed height
+            const parentHeight = parent.offsetHeight || parent.clientHeight;
+
+            while (element.scrollHeight > parentHeight && currentSize > minFontSize) {
+                currentSize--;
+                element.style.fontSize = currentSize + 'px';
+            }
+
+            // Restore height if needed, or leave auto
+            element.style.height = '100%';
+        }
+
+        // Simpler fit for wrapper against card face
+        function resizeToFit(element, maxHeight) {
+            let size = 100; // start percent
+            element.style.fontSize = '1em'; // reset
+
+            // Loop down fontSize pixels
+            let px = 24; // Start size
+            if (element.textContent.length > 200) px = 18;
+            if (element.textContent.length > 500) px = 16;
+
+            element.style.fontSize = px + 'px';
+
+            while (element.scrollHeight > maxHeight && px > 10) {
+                px--;
+                element.style.fontSize = px + 'px';
+            }
+        }
 
         function updateCard() {
             // Reset flip state
@@ -529,8 +803,29 @@
             setTimeout(() => {
                 const item = studyData[currentIndex];
                 termEl.textContent = item.term;
-                defEl.textContent = item.definition;
-                sigEl.textContent = item.significance;
+
+                // Handle No Flip
+                if (item.noFlip) {
+                    card.classList.add('no-flip');
+                    defEl.textContent = "";
+                    sigEl.textContent = "";
+
+                    // Fit text for Question
+                    resizeToFit(termEl, card.clientHeight - 80); // Account for padding
+
+                } else {
+                    card.classList.remove('no-flip');
+                    defEl.textContent = item.definition;
+                    sigEl.textContent = item.significance;
+
+                    // Reset Term Size
+                    termEl.style.fontSize = '2rem';
+
+                    // Fit text for Back (Definition)
+                    // We need to wait for render, but we are inside timeout
+                    resizeToFit(backWrapper, card.clientHeight - 80);
+                }
+
                 progressEl.textContent = `${currentIndex + 1} / ${studyData.length}`;
 
                 prevBtn.disabled = currentIndex === 0;
@@ -539,6 +834,7 @@
         }
 
         function flipCard() {
+            if (studyData[currentIndex].noFlip) return;
             card.classList.toggle('flipped');
         }
 
@@ -568,8 +864,30 @@
             }
         });
 
+        // Index Generation
+        function renderIndex() {
+            const listEl = document.getElementById('index-list');
+            listEl.innerHTML = ''; // Clear existing
+
+            studyData.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'index-item';
+                li.textContent = item.term; // The term or question
+
+                li.onclick = () => {
+                    currentIndex = index;
+                    updateCard();
+                    // Scroll smoothly to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+
+                listEl.appendChild(li);
+            });
+        }
+
         // Initialize
         updateCard();
+        renderIndex();
     </script>
 </body>
 

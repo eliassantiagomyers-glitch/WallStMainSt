@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +10,11 @@
             --text: #000000;
             --border: #000000;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg);
@@ -28,12 +25,10 @@
             align-items: center;
             justify-content: center;
         }
-
         header {
             text-align: center;
             margin-bottom: 2rem;
         }
-
         h1 {
             font-size: 2rem;
             font-weight: 700;
@@ -41,12 +36,10 @@
             text-transform: uppercase;
             letter-spacing: -1px;
         }
-
         p.subtitle {
             font-size: 0.9rem;
             font-style: italic;
         }
-
         /* Card Styles */
         .card-container {
             position: relative;
@@ -57,11 +50,9 @@
             transform-style: preserve-3d;
             transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
-
         .card-container.flipped {
             transform: rotateY(180deg);
         }
-
         .card-face {
             position: absolute;
             width: 100%;
@@ -79,24 +70,19 @@
             overflow-y: auto;
             /* Allows scrolling for long text */
         }
-
         /* Customize scrollbar for minimalist look */
         .card-face::-webkit-scrollbar {
             width: 4px;
         }
-
         .card-face::-webkit-scrollbar-track {
             background: transparent;
         }
-
         .card-face::-webkit-scrollbar-thumb {
             background: var(--border);
         }
-
         .card-front {
             z-index: 2;
         }
-
         .card-back {
             transform: rotateY(180deg);
             justify-content: flex-start;
@@ -104,24 +90,20 @@
             text-align: left;
             /* Ensure back text is left aligned */
         }
-
         .term {
             font-size: 2rem;
             font-weight: 700;
         }
-
         .tap-hint {
             margin-top: 2rem;
             font-size: 0.8rem;
             text-decoration: underline;
         }
-
         .definition-section {
             width: 100%;
             text-align: left;
             margin-bottom: 1.5rem;
         }
-
         .def-label {
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -130,12 +112,10 @@
             display: block;
             text-decoration: underline;
         }
-
         .def-text {
             font-size: 1rem;
             line-height: 1.5;
         }
-
         /* Controls */
         .controls {
             display: flex;
@@ -145,7 +125,6 @@
             width: 100%;
             gap: 1rem;
         }
-
         .btn {
             background: transparent;
             border: 2px solid var(--border);
@@ -156,58 +135,47 @@
             font-weight: 700;
             transition: all 0.1s ease;
         }
-
         .btn:hover {
             background: #000;
             color: #fff;
         }
-
         .btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
             background: transparent;
             color: var(--text);
         }
-
         .progress {
             font-weight: 700;
         }
-
         /* Mobile Adjustments */
         @media (max-width: 640px) {
             body {
                 padding: 1rem;
             }
-
             .container {
                 padding: 0.5rem;
                 width: 100%;
             }
-
             h1 {
                 font-size: 1.25rem;
                 margin-bottom: 0.25rem;
             }
-
             .card-container {
                 height: 60vh;
                 /* Responsive height for mobile */
                 max-height: 450px;
                 min-height: 300px;
             }
-
             .card-face {
                 padding: 1.25rem;
             }
-
             .term {
                 font-size: 1.5rem;
             }
-
             .controls {
                 margin-top: 1rem;
             }
-
             .btn {
                 padding: 1rem;
                 flex: 1;
@@ -215,14 +183,11 @@
         }
     </style>
 </head>
-
 <body>
-
     <header>
         <h1>Wall Street v. Main St Final Review</h1>
         <p class="subtitle">Press Space to Flip • Arrows to Navigate</p>
     </header>
-
     <div class="container">
         <div class="card-container" id="card" onclick="flipCard()">
             <div class="card-face card-front">
@@ -240,14 +205,12 @@
                 </div>
             </div>
         </div>
-
         <div class="controls">
             <button class="btn" id="prevBtn" onclick="prevCard()">← Prev</button>
             <div class="progress" id="progress">1 / 4</div>
             <button class="btn" id="nextBtn" onclick="nextCard()">Next →</button>
         </div>
     </div>
-
     <script>
         const studyData = [
             {
@@ -511,7 +474,6 @@
                 significance: "The 'Great Recession.' It shattered faith in the self-regulating power of markets (neoliberalism), led to massive government bailouts, and fueled populist political movements (Occupy Wall Street, Tea Party)."
             }
         ];
-
         let currentIndex = 0;
         const card = document.getElementById('card');
         const termEl = document.getElementById('card-term');
@@ -520,11 +482,9 @@
         const progressEl = document.getElementById('progress');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-
         function updateCard() {
             // Reset flip state
             card.classList.remove('flipped');
-
             // Short timeout to allow flip reset before changing content
             setTimeout(() => {
                 const item = studyData[currentIndex];
@@ -532,30 +492,25 @@
                 defEl.textContent = item.definition;
                 sigEl.textContent = item.significance;
                 progressEl.textContent = `${currentIndex + 1} / ${studyData.length}`;
-
                 prevBtn.disabled = currentIndex === 0;
                 nextBtn.disabled = currentIndex === studyData.length - 1;
             }, 200);
         }
-
         function flipCard() {
             card.classList.toggle('flipped');
         }
-
         function nextCard() {
             if (currentIndex < studyData.length - 1) {
                 currentIndex++;
                 updateCard();
             }
         }
-
         function prevCard() {
             if (currentIndex > 0) {
                 currentIndex--;
                 updateCard();
             }
         }
-
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
@@ -567,10 +522,8 @@
                 prevCard();
             }
         });
-
         // Initialize
         updateCard();
     </script>
 </body>
-
 </html>
